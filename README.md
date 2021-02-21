@@ -8,3 +8,4 @@ header-includes:
 An experiment on viewing [Capella](https://www.eclipse.org/capella/) architecture diagram in WebVR with [A-Frame](https://aframe.io/), especially to display allocation mapping.
 
 * [90&deg; top flip view](lab-pab-90-degree.html)
+* [90&deg; flipbook view](lab-pab-90-vertical.html)
