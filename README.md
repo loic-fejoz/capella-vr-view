@@ -9,3 +9,4 @@ An experiment on viewing [Capella](https://www.eclipse.org/capella/) architectur
 
 * [90&deg; top flip view](lab-pab-90-degree.html)
 * [90&deg; flipbook view](lab-pab-90-vertical.html)
+* [On top of each other view](layer-style-view.html): Transparency does not work!!
