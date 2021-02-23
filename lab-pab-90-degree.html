@@ -7,9 +7,57 @@
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-svg-extruder@1.0.0/dist/index.min.js"></script>
     <script src="https://supereggbert.github.io/aframe-htmlembed-component/dist/build.js"></script>
+    <script>
+var current_scale = 1.0;
+
+function incScale(evt) {
+  console.log("++");
+  current_scale += 0.1;
+  const scaleInput = document.getElementById('scaleInput');
+  scaleInput.setAttribute("value", current_scale);
+  var simulated_evt = {};
+  simulated_evt.target = scaleInput;
+  onScaleChange(simulated_evt);
+}
+function decScale(evt) {
+  console.log("--");
+  current_scale -= 0.1;
+  const scaleInput = document.getElementById('scaleInput');
+  scaleInput.setAttribute("value", current_scale);
+  var simulated_evt = {};
+  simulated_evt.target = scaleInput;
+  onScaleChange(simulated_evt);
+}
+
+function onScaleChange(evt) {
+  //current_scale = evt
+  console.log(evt.target.getAttribute("value"), current_scale);
+
+  const labPanel = document.getElementById('labPanel');
+  labPanel.setAttribute("scale", "" + current_scale + " " + current_scale + " " + current_scale);
+  labPanel.setAttribute("position", "0 " + (current_scale * 3) + " -4");
+
+  const pabPanel = document.getElementById('pabPanel');
+  var pos = "0 0 " + ((1-current_scale)*-4);
+  console.log(pos);
+  pabPanel.setAttribute("scale", "" + current_scale + " " + current_scale + " " + current_scale);
+  pabPanel.setAttribute("position", pos);
+}
+
+window.addEventListener("load", function(event) {
+  const incScaleBtn = document.getElementById('incScaleBtn');
+  incScaleBtn.addEventListener('click', incScale);
+
+  const decScaleBtn = document.getElementById('decScaleBtn');
+  decScaleBtn.addEventListener('click', decScale);
+
+  const scaleInput = document.getElementById('scaleInput');
+  scaleInput.addEventListener('change', incScale);
+});      
+    </script>
   </head>
   <body>
-    <a-scene background="color: #ECECEC">
+    <a-scene background="color: #ECECEC" >
       <!-- <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9" shadow></a-box> -->
       <!-- <a-sphere position="0 2 -7" radius="1" color="#EF2D5E" shadow></a-sphere> -->
       <a-cylinder rotation="-34 0 1.5" position="0 0 -1.25" radius="0.01" height="10" color="#FF8888" shadow></a-cylinder>
@@ -24,17 +72,35 @@
 
         <!-- <a-image src="oabd.svg"></a-image> -->
 
-        <a-entity htmlembed position="0 3 -4">
+        <a-entity htmlembed position="0 3 -4" id="labPanel">
             <!-- <object type="image/svg+xml" data="oabd.svg" ></object> -->
             <h1>[LAB] [BUILD] All Components, Functions, CEs, FEs</h1>
             <img src="lab.svg" />
         </a-entity>
 
-        <a-entity htmlembed position="0 0 0"   rotation="-90 0 0">
+        <a-entity htmlembed position="0 0 0"   rotation="-90 0 0" id="pabPanel">
             <!-- <object type="image/svg+xml" data="oabd.svg" ></object> -->
             <h1>[PAB] [BUILD] All PCs, PFs, FEs</h1>
             <img src="pab.svg" />
         </a-entity>
+        <a-entity htmlembed rotation="0 -30 0" position="5.5 3 -3" class="screen">
+          <div style="background-color: lightgrey; width: 20em; height: 10em; padding: 1em;">
+            <h1>Settings</h1>
+            <div>
+              <label for="scaleInput">Scale Factor&nbsp;:</label> <input id="scaleInput" type="number" step="0.1" value="1.0" />
+              <br/>
+              <button id="decScaleBtn">decrease (-)</button>&nbsp;<button id="incScaleBtn">increase (+)</button>
+            </div>
+          </div>
+        </a-entity>
+
+        <a-entity id="cameraRig">
+          <a-camera look-controls wasd-controls position="0 3 1">
+          </a-camera>
+          <a-entity id="mouseCursor" cursor="rayOrigin: mouse" raycaster="objects: .screen"></a-entity>
+          <a-entity laser-controls raycaster="objects: .screen;"></a-entity>
+        </a-entity>
+
     </a-scene>
   </body>
 </html>
