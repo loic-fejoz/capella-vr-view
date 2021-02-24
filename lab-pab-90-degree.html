@@ -7,6 +7,8 @@
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-svg-extruder@1.0.0/dist/index.min.js"></script>
     <script src="https://supereggbert.github.io/aframe-htmlembed-component/dist/build.js"></script>
+    <script src="https://rawgit.com/fernandojsg/aframe-teleport-controls/master/dist/aframe-teleport-controls.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/n5ro/aframe-physics-system@v4.0.1/dist/aframe-physics-system.min.js"></script>
     <script>
 var current_scale = 1.0;
 
@@ -54,10 +56,26 @@ window.addEventListener("load", function(event) {
   const scaleInput = document.getElementById('scaleInput');
   scaleInput.addEventListener('change', incScale);
 });      
+
+
+// See http://inspiredtoeducate.net/inspiredtoeducate/build-a-aframe-io-scene-on-oculus-quest-with-teleportation/
+AFRAME.registerComponent("input-listen", {
+  init: function () {
+      //X-button Pressed
+      this.el.addEventListener("xbuttondown", function (e) {
+          this.emit("teleportstart");
+      });
+
+      //X-button Released
+      this.el.addEventListener("xbuttonup", function (e) {
+          this.emit("teleportend");
+      });
+  }
+});
     </script>
   </head>
   <body>
-    <a-scene background="color: #ECECEC" >
+    <a-scene background="color: #ECECEC" > 
       <!-- <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9" shadow></a-box> -->
       <!-- <a-sphere position="0 2 -7" radius="1" color="#EF2D5E" shadow></a-sphere> -->
       <a-cylinder rotation="-34 0 1.5" position="0 0 -1.25" radius="0.01" height="10" color="#FF8888" shadow></a-cylinder>
@@ -78,12 +96,12 @@ window.addEventListener("load", function(event) {
             <img src="lab.svg" />
         </a-entity>
 
-        <a-entity htmlembed position="0 0 0"   rotation="-90 0 0" id="pabPanel">
+        <a-entity htmlembed position="0 0 0"   rotation="-90 0 0" id="pabPanel" class="walkable">
             <!-- <object type="image/svg+xml" data="oabd.svg" ></object> -->
             <h1>[PAB] [BUILD] All PCs, PFs, FEs</h1>
             <img src="pab.svg" />
         </a-entity>
-        <a-entity htmlembed rotation="0 -30 0" position="5.5 3 -3" class="screen">
+        <a-entity htmlembed rotation="0 -30 0" position="5.5 3 -3" class="collidable">
           <div style="background-color: lightgrey; width: 20em; height: 10em; padding: 1em;">
             <h1>Settings</h1>
             <div>
@@ -95,12 +113,19 @@ window.addEventListener("load", function(event) {
         </a-entity>
 
         <a-entity id="cameraRig">
-          <a-camera look-controls wasd-controls position="0 3 1">
+          <a-camera id="head" look-controls wasd-controls="fly: true" position="0 3 1">
           </a-camera>
-          <a-entity id="mouseCursor" cursor="rayOrigin: mouse" raycaster="objects: .screen"></a-entity>
-          <a-entity laser-controls raycaster="objects: .screen;"></a-entity>
+          <a-entity id="mouseCursor" cursor="rayOrigin: mouse" raycaster="objects: .collidable"></a-entity>
+          <a-entity laser-controls raycaster="objects: .collidable;"></a-entity>
+          <a-entity id="leftHand"
+            teleport-controls="cameraRig: #cameraRig; teleportOrigin: #head; startEvents: teleportstart; endEvents: teleportend"
+            raycaster="objects: .walkable; far:1;" laser-controls="hand: left" input-listen>
+            <a-text value="X: Teleport" position="0 0.05 1" rotation="-90 0 0" scale="0.1 0.1 0.1" align="center" color="#FFFFFF"></a-text>
+          </a-entity>
+          <a-entity id="rightHand" raycaster="objects: .collidable; far:1.2;" laser-controls="hand: right" input-listen>
+              <a-text value="This is your hand!" position="0 0.05 1" rotation="-90 0 0" scale="0.1 0.1 0.1" align="center" color="#FFFFFF"></a-text>
+          </a-entity>
         </a-entity>
-
     </a-scene>
   </body>
 </html>
